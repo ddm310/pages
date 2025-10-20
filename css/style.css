@@ -927,7 +927,7 @@ img {
   background-color: rgba(251, 242, 222, 0.9);
   margin: 40px auto;
   max-width: 1000px;
-  border-radius: 15px;
+  border-radius: 5px;
 }
 
 .gallery-section h2 {
@@ -986,6 +986,7 @@ img {
     transform: translateX(-50%);
   }
 }
+
 
 
 
