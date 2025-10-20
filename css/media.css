@@ -1,0 +1,50 @@
+/* ===== MOBILE FIRST ===== */
+/* Базовые стили для мобильных */
+
+/* Хедер на мобильных */
+@media (max-width: 768px) {
+    .left-text {
+        align-items: center;
+        flex-direction: column;
+    }
+
+    .image-block {
+        width: 100%;
+    }
+
+    .left-text p {
+        width: 100%;
+        text-align: center;
+    }
+
+    header {
+        flex-direction: column;
+    }
+
+    .images {
+        width: 60%;
+        flex-direction: column;
+    }
+
+    .slide-group {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .container {
+        padding: 0;
+    }
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .generate-container {
+        flex-direction: column;
+        gap: 30px;
+    }
+
+    .image-actions {
+        flex-direction: column;
+    }
+}
