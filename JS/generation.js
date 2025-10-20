@@ -52,9 +52,10 @@ async function generateImage() {
 }
 
 function saveToGallery(imageUrl, prompt) {
+    // Сохраняем оригинальный blob URL
     const imageData = {
         id: Date.now(),
-        url: imageUrl,
+        url: imageUrl, // оставляем оригинальный blob URL
         prompt: prompt
     };
     
@@ -162,3 +163,4 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
