@@ -880,7 +880,8 @@ img {
 
 /* Стили для текстового поля промпта */
 #prompt-input {
-  width: calc(100% - 30px); /* учитываем отступы */
+  width: calc(100% - 30px);
+  /* учитываем отступы */
   min-height: 120px;
   padding: 12px 15px;
   border: 2px solid #8B7355;
@@ -889,7 +890,8 @@ img {
   font-size: 16px;
   resize: vertical;
   background: linear-gradient(135deg, #fdf6e3 0%, #fbf2de 100%);
-  margin: 0 15px 15px 15px; /* отступы со всех сторон */
+  margin: 0 15px 15px 15px;
+  /* отступы со всех сторон */
   transition: all 0.4s ease;
   box-shadow: 0 4px 15px rgba(139, 115, 85, 0.1);
   color: #5D4037;
@@ -915,12 +917,17 @@ img {
 }
 
 .gallery-section {
-  padding: 40px 20px;
-  background-color: rgba(251, 242, 222, 0.9);
-  margin: 40px auto;
-  max-width: 1000px;
-  border-radius: 15px;
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+  border: 2px #22180e;
+  border-radius: 8px;
+  background-color: #fdfaf7;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
+
 
 .gallery-section {
   padding: 40px 20px;
@@ -982,11 +989,8 @@ img {
   0% {
     transform: translateX(0);
   }
+
   100% {
     transform: translateX(-50%);
   }
 }
-
-
-
-
