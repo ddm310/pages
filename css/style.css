@@ -601,21 +601,13 @@ img {
   background-color: #4b6631;
 }
 
-#generated-image img {
-  max-width: 100%;
-  border-radius: 10px;
-  margin-top: 20px;
-}
-
 #generated-image {
-  width: 100% !important;
-  height: auto !important;
-  max-width: 100% !important;
-  max-height: none !important;
+  width: 100%;
+  height: auto;
+  max-height: 300px;
   object-fit: contain;
   border-radius: 5px;
   display: block;
-  margin-top: 0;
 }
 
 /* Стили для блока генерации изображений */
@@ -633,6 +625,17 @@ img {
   gap: 40px;
   flex-wrap: wrap;
   align-items: flex-start;
+}
+
+.btn_download {
+  margin-top: 15px;
+  padding: 10px 20px;
+  background-color: #553607;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-family: 'Slovic_Demo', serif;
 }
 
 .prompt-section {
@@ -910,4 +913,5 @@ img {
   box-shadow: 0 8px 20px rgba(139, 115, 85, 0.15);
 
 }
+
 
