@@ -10,7 +10,6 @@ const imagePreview = document.querySelector('.image-preview');
 let currentImageUrl = null;
 let userImages = JSON.parse(localStorage.getItem(GALLERY_KEY)) || [];
 
-// Загружаем галерею при старте
 document.addEventListener('DOMContentLoaded', function() {
     updateGallery();
 });
