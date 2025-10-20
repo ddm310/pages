@@ -10,9 +10,12 @@ const imagePreview = document.querySelector('.image-preview');
 let currentImageUrl = null;
 let userImages = JSON.parse(localStorage.getItem(GALLERY_KEY)) || [];
 
-updateGallery();
-
-generateBtn.addEventListener('click', generateImage);
+// Ждем когда страница полностью загрузится
+document.addEventListener('DOMContentLoaded', function() {
+    updateGallery();
+    
+    generateBtn.addEventListener('click', generateImage);
+});
 
 async function generateImage() {
     const prompt = promptInput.value.trim();
