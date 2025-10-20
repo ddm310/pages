@@ -1,4 +1,5 @@
 const SERVER_URL = "https://server-pr1k.onrender.com";
+const GALLERY_KEY = "user_generated_images";
 
 const promptInput = document.getElementById('prompt-input');
 const generateBtn = document.getElementById('generate-btn');
@@ -7,6 +8,12 @@ const generatedImage = document.getElementById('generated-image');
 const imagePreview = document.querySelector('.image-preview');
 
 let currentImageUrl = null;
+let userImages = JSON.parse(localStorage.getItem(GALLERY_KEY)) || [];
+
+// Загружаем галерею при старте
+document.addEventListener('DOMContentLoaded', function() {
+    updateGallery();
+});
 
 generateBtn.addEventListener('click', generateImage);
 promptInput.addEventListener('keypress', function(e) {
@@ -43,6 +50,7 @@ async function generateImage() {
             }
             
             currentImageUrl = URL.createObjectURL(imageBlob);
+            saveToGallery(currentImageUrl, prompt);
             showSuccess();
             
         } else {
@@ -62,6 +70,49 @@ async function generateImage() {
     } finally {
         hideLoading();
     }
+}
+
+function saveToGallery(imageUrl, prompt) {
+    const imageData = {
+        id: Date.now(),
+        url: imageUrl,
+        prompt: prompt,
+        timestamp: new Date().toLocaleString('ru-RU')
+    };
+    
+    userImages.unshift(imageData);
+    
+    if (userImages.length > 20) {
+        userImages = userImages.slice(0, 20);
+    }
+    
+    localStorage.setItem(GALLERY_KEY, JSON.stringify(userImages));
+    updateGallery();
+}
+
+function updateGallery() {
+    const galleryTrack = document.getElementById('gallery-track');
+    if (!galleryTrack) return;
+    
+    galleryTrack.innerHTML = '';
+    
+    const allImages = [...userImages, ...userImages];
+    
+    allImages.forEach(image => {
+        const galleryItem = document.createElement('div');
+        galleryItem.className = 'gallery-item';
+        
+        const img = document.createElement('img');
+        img.src = image.url;
+        img.alt = image.prompt;
+        img.classList.add('zoom');
+        
+        galleryItem.appendChild(img);
+        galleryTrack.appendChild(galleryItem);
+    });
+    
+    const zoomEvent = new Event('zoomUpdate');
+    document.dispatchEvent(zoomEvent);
 }
 
 function showLoading() {
@@ -88,16 +139,29 @@ function showSuccess() {
     imagePlaceholder.style.display = 'none';
     imagePreview.classList.add('has-image');
     
-    if (!document.getElementById('download-btn')) {
-        const downloadBtn = document.createElement('button');
-        downloadBtn.id = 'download-btn';
-        downloadBtn.className = 'btn btn_download';
-        downloadBtn.textContent = 'Скачать изображение';
-        downloadBtn.style.marginTop = '15px';
-        downloadBtn.addEventListener('click', downloadImage);
-        
-        generatedImage.insertAdjacentElement('afterend', downloadBtn);
+    if (!generatedImage.classList.contains('zoom')) {
+        generatedImage.classList.add('zoom');
     }
+    
+    const zoomEvent = new Event('zoomUpdate');
+    document.dispatchEvent(zoomEvent);
+    
+    const oldDownloadBtn = document.getElementById('download-btn');
+    if (oldDownloadBtn) {
+        oldDownloadBtn.remove();
+    }
+    
+    const downloadBtn = document.createElement('button');
+    downloadBtn.id = 'download-btn';
+    downloadBtn.className = 'btn';
+    downloadBtn.textContent = 'Скачать изображение';
+    downloadBtn.addEventListener('click', downloadImage);
+    
+    const downloadContainer = document.createElement('div');
+    downloadContainer.className = 'download-container';
+    downloadContainer.appendChild(downloadBtn);
+    
+    imagePreview.appendChild(downloadContainer);
 }
 
 function showError(message) {
@@ -135,6 +199,13 @@ style.textContent = `
     @keyframes spin {
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
+    }
+    
+    .download-container {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        margin-top: 15px;
     }
 `;
 document.head.appendChild(style);
