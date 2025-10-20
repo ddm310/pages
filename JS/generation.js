@@ -10,12 +10,9 @@ const imagePreview = document.querySelector('.image-preview');
 let currentImageUrl = null;
 let userImages = JSON.parse(localStorage.getItem(GALLERY_KEY)) || [];
 
-// Ждем когда страница полностью загрузится
-document.addEventListener('DOMContentLoaded', function() {
-    updateGallery();
-    
-    generateBtn.addEventListener('click', generateImage);
-});
+updateGallery();
+
+generateBtn.addEventListener('click', generateImage);
 
 async function generateImage() {
     const prompt = promptInput.value.trim();
@@ -38,7 +35,26 @@ async function generateImage() {
         if (response.ok) {
             const imageBlob = await response.blob();
             currentImageUrl = URL.createObjectURL(imageBlob);
-            saveToGallery(currentImageUrl, prompt);
+            
+            // Сохраняем в галерею как base64
+            const reader = new FileReader();
+            reader.onload = function() {
+                const imageData = {
+                    id: Date.now(),
+                    url: reader.result,
+                    prompt: prompt
+                };
+                
+                userImages.unshift(imageData);
+                if (userImages.length > 20) {
+                    userImages = userImages.slice(0, 20);
+                }
+                
+                localStorage.setItem(GALLERY_KEY, JSON.stringify(userImages));
+                updateGallery();
+            };
+            reader.readAsDataURL(imageBlob);
+            
             showSuccess();
         } else {
             throw new Error('Ошибка сервера');
@@ -51,32 +67,25 @@ async function generateImage() {
     }
 }
 
-function saveToGallery(imageUrl, prompt) {
-    // Конвертируем blob URL в base64 для сохранения
-    fetch(imageUrl)
-        .then(response => response.blob())
-        .then(blob => {
-            const reader = new FileReader();
-            reader.onload = function() {
-                const imageData = {
-                    id: Date.now(),
-                    url: reader.result, // base64 данные
-                    prompt: prompt
-                };
-                
-                userImages.unshift(imageData);
-                if (userImages.length > 20) {
-                    userImages = userImages.slice(0, 20);
-                }
-                
-                localStorage.setItem(GALLERY_KEY, JSON.stringify(userImages));
-                updateGallery();
-            };
-            reader.readAsDataURL(blob);
-        })
-        .catch(error => {
-            console.error('Ошибка сохранения изображения:', error);
-        });
+function updateGallery() {
+    const galleryTrack = document.getElementById('gallery-track');
+    if (!galleryTrack) return;
+    
+    galleryTrack.innerHTML = '';
+    const allImages = [...userImages, ...userImages];
+    
+    allImages.forEach(image => {
+        const galleryItem = document.createElement('div');
+        galleryItem.className = 'gallery-item';
+        
+        const img = document.createElement('img');
+        img.src = image.url;
+        img.alt = image.prompt;
+        img.classList.add('zoom');
+        
+        galleryItem.appendChild(img);
+        galleryTrack.appendChild(galleryItem);
+    });
 }
 
 function showLoading() {
@@ -153,5 +162,3 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
-
-
