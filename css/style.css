@@ -607,6 +607,17 @@ img {
   margin-top: 20px;
 }
 
+#generated-image {
+  width: 100% !important;
+  height: auto !important;
+  max-width: 100% !important;
+  max-height: none !important;
+  object-fit: contain;
+  border-radius: 5px;
+  display: block;
+  margin-top: 0;
+}
+
 /* Стили для блока генерации изображений */
 .generate-section {
   padding: 60px 20px;
@@ -895,4 +906,5 @@ img {
 #prompt-input:hover {
   border-color: #A1887F;
   box-shadow: 0 8px 20px rgba(139, 115, 85, 0.15);
+
 }
