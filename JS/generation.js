@@ -10,21 +10,12 @@ const imagePreview = document.querySelector('.image-preview');
 let currentImageUrl = null;
 let userImages = JSON.parse(localStorage.getItem(GALLERY_KEY)) || [];
 
-document.addEventListener('DOMContentLoaded', function() {
-    updateGallery();
-});
+updateGallery();
 
 generateBtn.addEventListener('click', generateImage);
-promptInput.addEventListener('keypress', function(e) {
-    if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        generateImage();
-    }
-});
 
 async function generateImage() {
     const prompt = promptInput.value.trim();
-    
     if (!prompt) {
         alert('Пожалуйста, введите описание изображения');
         return;
@@ -43,28 +34,14 @@ async function generateImage() {
         
         if (response.ok) {
             const imageBlob = await response.blob();
-            
-            if (imageBlob.size === 0) {
-                throw new Error('Получен пустой файл изображения');
-            }
-            
             currentImageUrl = URL.createObjectURL(imageBlob);
             saveToGallery(currentImageUrl, prompt);
             showSuccess();
-            
         } else {
-            let errorMessage = 'Ошибка сервера';
-            try {
-                const errorData = await response.json();
-                errorMessage = errorData.error || errorMessage;
-            } catch (e) {
-                errorMessage = `HTTP ошибка: ${response.status}`;
-            }
-            throw new Error(errorMessage);
+            throw new Error('Ошибка сервера');
         }
         
     } catch (error) {
-        console.error('Ошибка генерации:', error);
         showError(`Ошибка: ${error.message}`);
     } finally {
         hideLoading();
@@ -75,12 +52,10 @@ function saveToGallery(imageUrl, prompt) {
     const imageData = {
         id: Date.now(),
         url: imageUrl,
-        prompt: prompt,
-        timestamp: new Date().toLocaleString('ru-RU')
+        prompt: prompt
     };
     
     userImages.unshift(imageData);
-    
     if (userImages.length > 20) {
         userImages = userImages.slice(0, 20);
     }
@@ -94,7 +69,6 @@ function updateGallery() {
     if (!galleryTrack) return;
     
     galleryTrack.innerHTML = '';
-    
     const allImages = [...userImages, ...userImages];
     
     allImages.forEach(image => {
@@ -109,9 +83,6 @@ function updateGallery() {
         galleryItem.appendChild(img);
         galleryTrack.appendChild(galleryItem);
     });
-    
-    const zoomEvent = new Event('zoomUpdate');
-    document.dispatchEvent(zoomEvent);
 }
 
 function showLoading() {
@@ -124,7 +95,6 @@ function showLoading() {
         </div>
     `;
     generatedImage.style.display = 'none';
-    imagePreview.classList.remove('has-image');
 }
 
 function hideLoading() {
@@ -136,19 +106,13 @@ function showSuccess() {
     generatedImage.src = currentImageUrl;
     generatedImage.style.display = 'block';
     imagePlaceholder.style.display = 'none';
-    imagePreview.classList.add('has-image');
     
     if (!generatedImage.classList.contains('zoom')) {
         generatedImage.classList.add('zoom');
     }
     
-    const zoomEvent = new Event('zoomUpdate');
-    document.dispatchEvent(zoomEvent);
-    
     const oldDownloadBtn = document.getElementById('download-btn');
-    if (oldDownloadBtn) {
-        oldDownloadBtn.remove();
-    }
+    if (oldDownloadBtn) oldDownloadBtn.remove();
     
     const downloadBtn = document.createElement('button');
     downloadBtn.id = 'download-btn';
@@ -159,38 +123,26 @@ function showSuccess() {
     const downloadContainer = document.createElement('div');
     downloadContainer.className = 'download-container';
     downloadContainer.appendChild(downloadBtn);
-    
     imagePreview.appendChild(downloadContainer);
 }
 
 function showError(message) {
     imagePlaceholder.innerHTML = `
         <div style="text-align: center; padding: 20px;">
-            <p style="color: #e74c3c; margin-bottom: 10px;">❌ ${message}</p>
-            <p style="color: #7f8c8d; font-size: 0.9rem;">Попробуйте обновить страницу или повторить позже</p>
+            <p style="color: #e74c3c;">❌ ${message}</p>
         </div>
     `;
-    generatedImage.style.display = 'none';
-    imagePreview.classList.remove('has-image');
 }
 
 function downloadImage() {
-    if (!currentImageUrl) {
-        alert('Нет изображения для скачивания');
-        return;
-    }
+    if (!currentImageUrl) return;
     
-    try {
-        const link = document.createElement('a');
-        link.href = currentImageUrl;
-        link.download = 'благоустройство-будущего.png';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        
-    } catch (error) {
-        alert('Ошибка при скачивании файла');
-    }
+    const link = document.createElement('a');
+    link.href = currentImageUrl;
+    link.download = 'благоустройство-будущего.png';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 }
 
 const style = document.createElement('style');
@@ -199,7 +151,6 @@ style.textContent = `
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
     }
-    
     .download-container {
         width: 100%;
         display: flex;
