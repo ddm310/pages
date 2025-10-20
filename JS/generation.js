@@ -52,41 +52,31 @@ async function generateImage() {
 }
 
 function saveToGallery(imageUrl, prompt) {
-    // Сохраняем оригинальный blob URL
-    const imageData = {
-        id: Date.now(),
-        url: imageUrl, // оставляем оригинальный blob URL
-        prompt: prompt
-    };
-    
-    userImages.unshift(imageData);
-    if (userImages.length > 20) {
-        userImages = userImages.slice(0, 20);
-    }
-    
-    localStorage.setItem(GALLERY_KEY, JSON.stringify(userImages));
-    updateGallery();
-}
-
-function updateGallery() {
-    const galleryTrack = document.getElementById('gallery-track');
-    if (!galleryTrack) return;
-    
-    galleryTrack.innerHTML = '';
-    const allImages = [...userImages, ...userImages];
-    
-    allImages.forEach(image => {
-        const galleryItem = document.createElement('div');
-        galleryItem.className = 'gallery-item';
-        
-        const img = document.createElement('img');
-        img.src = image.url;
-        img.alt = image.prompt;
-        img.classList.add('zoom');
-        
-        galleryItem.appendChild(img);
-        galleryTrack.appendChild(galleryItem);
-    });
+    // Конвертируем blob URL в base64 для сохранения
+    fetch(imageUrl)
+        .then(response => response.blob())
+        .then(blob => {
+            const reader = new FileReader();
+            reader.onload = function() {
+                const imageData = {
+                    id: Date.now(),
+                    url: reader.result, // base64 данные
+                    prompt: prompt
+                };
+                
+                userImages.unshift(imageData);
+                if (userImages.length > 20) {
+                    userImages = userImages.slice(0, 20);
+                }
+                
+                localStorage.setItem(GALLERY_KEY, JSON.stringify(userImages));
+                updateGallery();
+            };
+            reader.readAsDataURL(blob);
+        })
+        .catch(error => {
+            console.error('Ошибка сохранения изображения:', error);
+        });
 }
 
 function showLoading() {
@@ -163,4 +153,5 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
 
