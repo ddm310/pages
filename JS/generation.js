@@ -1,15 +1,13 @@
-// Конфигурация
 const SERVER_URL = "https://server-pr1k.onrender.com";
 
-// Элементы DOM - исправлены под твои ID
 const promptInput = document.getElementById('prompt-input');
 const generateBtn = document.getElementById('generate-btn');
 const imagePlaceholder = document.getElementById('image-placeholder');
 const generatedImage = document.getElementById('generated-image');
+const imagePreview = document.querySelector('.image-preview');
 
 let currentImageUrl = null;
 
-// События
 generateBtn.addEventListener('click', generateImage);
 promptInput.addEventListener('keypress', function(e) {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -18,7 +16,6 @@ promptInput.addEventListener('keypress', function(e) {
     }
 });
 
-// Генерация изображения
 async function generateImage() {
     const prompt = promptInput.value.trim();
     
@@ -27,7 +24,6 @@ async function generateImage() {
         return;
     }
     
-    // Показываем загрузку
     showLoading();
     
     try {
@@ -68,7 +64,6 @@ async function generateImage() {
     }
 }
 
-// Вспомогательные функции
 function showLoading() {
     generateBtn.disabled = true;
     generateBtn.textContent = 'Генерация...';
@@ -79,6 +74,7 @@ function showLoading() {
         </div>
     `;
     generatedImage.style.display = 'none';
+    imagePreview.classList.remove('has-image');
 }
 
 function hideLoading() {
@@ -87,12 +83,11 @@ function hideLoading() {
 }
 
 function showSuccess() {
-    // Показываем сгенерированное изображение
     generatedImage.src = currentImageUrl;
     generatedImage.style.display = 'block';
     imagePlaceholder.style.display = 'none';
+    imagePreview.classList.add('has-image');
     
-    // Добавляем кнопку скачивания если её нет
     if (!document.getElementById('download-btn')) {
         const downloadBtn = document.createElement('button');
         downloadBtn.id = 'download-btn';
@@ -113,9 +108,9 @@ function showError(message) {
         </div>
     `;
     generatedImage.style.display = 'none';
+    imagePreview.classList.remove('has-image');
 }
 
-// Скачивание изображения
 function downloadImage() {
     if (!currentImageUrl) {
         alert('Нет изображения для скачивания');
@@ -135,7 +130,6 @@ function downloadImage() {
     }
 }
 
-// Добавляем стили для анимации загрузки
 const style = document.createElement('style');
 style.textContent = `
     @keyframes spin {
