@@ -922,6 +922,14 @@ img {
   border-radius: 15px;
 }
 
+.gallery-section {
+  padding: 40px 20px;
+  background-color: rgba(251, 242, 222, 0.9);
+  margin: 40px auto;
+  max-width: 1000px;
+  border-radius: 15px;
+}
+
 .gallery-section h2 {
   text-align: center;
   color: #5D4037;
@@ -978,6 +986,7 @@ img {
     transform: translateX(-50%);
   }
 }
+
 
 
 
